@@ -13,4 +13,24 @@ contract ProposalContract {
         proposals.push(Proposal(_title, _description));
     }
 }
-Explanation:
+function calculateCurrentState() private view returns (bool) {
+    Proposal storage proposal = proposal_history[counter];
+
+    uint256 approve = proposal.approve;
+    uint256 reject = proposal.reject;
+    uint256 pass = proposal.pass;
+
+    uint256 totalVotes = approve + reject + pass;
+    
+    if (totalVotes == 0) {
+        return false; // Default to failed if no votes are cast
+    }
+
+    // Check if approvals are at least 60% of total votes
+    if (approve * 100 >= totalVotes * 60) {
+        return true; // Proposal succeeded
+    } else {
+        return false; // Proposal failed
+    }
+}
+
